@@ -95,8 +95,10 @@ class App {
         await AppDataSource.initialize();
         console.log('Database connected successfully');
       } catch (error) {
-        console.error('Database connection error:', error);
-        process.exit(1);
+        const message = error instanceof Error ? error.message : 'Unknown database error';
+        console.warn('Database connection failed:', message);
+        console.warn('Server will continue running without database connection');
+        console.warn('Database-dependent features will not be available');
       }
 
       const PORT = config.port || 3000;
