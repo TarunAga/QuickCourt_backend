@@ -1,0 +1,82 @@
+.venue-page {
+  max-width: 900px;
+  margin: auto;
+  font-family: sans-serif;
+  color: #333;
+}
+.venue-hero {
+  text-align: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+.venue-rating {
+  font-size: 18px;
+  color: #ff9800;
+}
+.book-btn {
+  background: #28a745;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.venue-gallery {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+.venue-gallery img {
+  flex: 1;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.venue-about {
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+.venue-ratings {
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+.venue-reviews {
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+}
+.review-card {
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+}
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+}
+.review-form input, .review-form select, .review-form textarea {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+.review-form button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.error {
+  color: red;
+  font-size: 12px;
+}
+.venue-map {
+  margin-top: 20px;
+}
