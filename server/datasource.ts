@@ -4,6 +4,7 @@ import { User } from './src/entities/User';
 import { Facility } from './src/entities/Facility';
 import { Bookings } from './src/entities/Bookings';
 import { Sports } from './src/entities/Sports';
+import { Review } from './src/entities/Review';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -17,7 +18,7 @@ export const AppDataSource = new DataSource({
   ssl: process.env.PGSSLMODE === 'require' ? {
     rejectUnauthorized: false
   } : false,
-  entities: [User, Facility, Bookings, Sports],
+  entities: [User, Facility, Bookings, Sports, Review],
   migrations: ['./src/migrations/**/*.ts'],
   subscribers: ['./src/subscribers/**/*.ts'],
 });
