@@ -1,0 +1,35 @@
+{
+  "port": 8080,
+  "nodeEnv": "production",
+  "corsOrigin": ["https://quickcourt.com", "https://www.quickcourt.com"],
+  "database": {
+    "type": "postgres",
+    "host": "prod-db-host",
+    "port": 5432,
+    "username": "prod_user",
+    "password": "prod_password",
+    "database": "quickcourt_prod"
+  },
+  "jwt": {
+    "secret": "your-production-jwt-secret-key-here",
+    "expiresIn": "1h"
+  },
+  "fileUpload": {
+    "maxSize": "5mb",
+    "allowedTypes": [".jpg", ".jpeg", ".png", ".pdf", ".doc", ".docx"],
+    "uploadPath": "./uploads/prod"
+  },
+  "redis": {
+    "host": "redis-prod-host",
+    "port": 6379,
+    "password": "redis-prod-password",
+    "db": 0
+  },
+  "email": {
+    "host": "smtp.gmail.com",
+    "port": 587,
+    "secure": true,
+    "user": "noreply@quickcourt.com",
+    "password": "prod-email-password"
+  }
+}

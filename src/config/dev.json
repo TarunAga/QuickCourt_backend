@@ -1,0 +1,35 @@
+{
+  "port": 3000,
+  "nodeEnv": "development",
+  "corsOrigin": ["http://localhost:3000", "http://localhost:3001", "http://localhost:5173"],
+  "database": {
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "dev_user",
+    "password": "dev_password",
+    "database": "quickcourt_dev"
+  },
+  "jwt": {
+    "secret": "your-dev-jwt-secret-key-here",
+    "expiresIn": "24h"
+  },
+  "fileUpload": {
+    "maxSize": "10mb",
+    "allowedTypes": [".jpg", ".jpeg", ".png", ".pdf", ".doc", ".docx"],
+    "uploadPath": "./uploads/dev"
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "password": "",
+    "db": 0
+  },
+  "email": {
+    "host": "smtp.gmail.com",
+    "port": 587,
+    "secure": false,
+    "user": "dev@quickcourt.com",
+    "password": "dev-email-password"
+  }
+}
