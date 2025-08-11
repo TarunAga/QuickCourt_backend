@@ -94,3 +94,4 @@ export class FileHelper {
     return `${timestamp}_${random}.${extension}`;
   }
 }
+export { sendOtpEmail } from './sendOtpEmail';

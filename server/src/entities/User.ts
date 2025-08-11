@@ -35,6 +35,12 @@ export class User {
   @Column({ name: "is_active", default: true })
   isActive: boolean;
 
+  @Column({ nullable: true })
+  otp?: string;
+
+  @Column({ name: "otp_expires", type: "bigint", nullable: true })
+  otpExpires?: number;
+
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
