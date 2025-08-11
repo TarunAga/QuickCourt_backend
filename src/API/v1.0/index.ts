@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import fileRoutes from './fileRoutes';
 import authRoutes from './authRoutes';
 
 const router = Router();
@@ -14,8 +13,6 @@ router.get('/health', (req, res) => {
 });
 
 // Route modules
-router.use('/files', fileRoutes);
-// Add other routes here as they are created
 router.use('/auth', authRoutes);
 
 export default router;

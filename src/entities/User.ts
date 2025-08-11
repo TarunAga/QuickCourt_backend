@@ -6,7 +6,6 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { File } from './File';
 
 @Entity('users')
 export class User {
@@ -42,7 +41,4 @@ export class User {
 
   @UpdateDateColumn({ name: 'updated_at', nullable: true })
   updatedAt?: Date;
-
-  @OneToMany(() => File, file => file.userId)
-  files: File[];
 }
