@@ -50,8 +50,8 @@ export class FileOperations {
   }
 
   async getAllFiles(
-    userId: number, 
-    page: number = 1, 
+    userId: number,
+    page: number = 1,
     limit: number = 10
   ): Promise<PaginatedResponse<File>> {
     try {
@@ -103,7 +103,7 @@ export class FileOperations {
 
       // Delete from database
       await this.fileRepository.remove(file);
-      
+
       return true;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
@@ -112,8 +112,8 @@ export class FileOperations {
   }
 
   async updateFile(
-    fileId: number, 
-    userId: number, 
+    fileId: number,
+    userId: number,
     updateData: UpdateFileDto
   ): Promise<File | null> {
     try {
@@ -141,18 +141,18 @@ export class FileOperations {
   }
 
   async getFilesByType(
-    userId: number, 
-    mimetype: string, 
-    page: number = 1, 
+    userId: number,
+    mimetype: string,
+    page: number = 1,
     limit: number = 10
   ): Promise<PaginatedResponse<File>> {
     try {
       const skip = (page - 1) * limit;
 
       const [files, total] = await this.fileRepository.findAndCount({
-        where: { 
-          userId, 
-          mimetype: mimetype 
+        where: {
+          userId,
+          mimetype: mimetype,
         },
         order: { uploadedAt: 'DESC' },
         skip,

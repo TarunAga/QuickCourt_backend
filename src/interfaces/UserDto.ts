@@ -14,6 +14,7 @@ export interface CreateUserDto {
   password: string;
   firstName: string;
   lastName: string;
+  avatar?: string;
   role?: string;
 }
 
@@ -21,6 +22,7 @@ export interface UpdateUserDto {
   firstName?: string;
   lastName?: string;
   email?: string;
+  avatar?: string;
   isActive?: boolean;
 }
 

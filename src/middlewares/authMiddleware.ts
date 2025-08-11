@@ -21,9 +21,7 @@ export const authMiddleware = async (
       return;
     }
 
-    const token = authHeader.startsWith('Bearer ') 
-      ? authHeader.substring(7) 
-      : authHeader;
+    const token = authHeader.startsWith('Bearer ') ? authHeader.substring(7) : authHeader;
 
     if (!token) {
       const response: ErrorResponse = {

@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { File } from './File';
 
 @Entity('users')
@@ -18,8 +25,14 @@ export class User {
   @Column({ name: 'last_name' })
   lastName: string;
 
+  @Column({ nullable: true })
+  avatar?: string;
+
   @Column({ default: 'user' })
   role: string;
+
+  @Column({ nullable: true })
+  otp?: string;
 
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
@@ -30,6 +43,6 @@ export class User {
   @UpdateDateColumn({ name: 'updated_at', nullable: true })
   updatedAt?: Date;
 
-  @OneToMany(() => File, (file) => file.userId)
+  @OneToMany(() => File, file => file.userId)
   files: File[];
 }

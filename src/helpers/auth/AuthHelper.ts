@@ -21,7 +21,7 @@ export class AuthHelper {
       lastName: user.lastName,
       role: user.role,
     };
-    
+
     return jwt.sign(payload, config.jwt.secret, {
       expiresIn: '24h', // Default to 24 hours
     });
@@ -32,10 +32,15 @@ export class AuthHelper {
   }
 
   static generateRefreshToken(userId: number): string {
-    return jwt.sign(
-      { userId },
-      config.jwt.secret + '_refresh',
-      { expiresIn: '7d' }
-    );
+    return jwt.sign({ userId }, config.jwt.secret + '_refresh', { expiresIn: '7d' });
+  }
+
+  static generateOtp(length: number = 6): string {
+    const digits = '0123456789';
+    let otp = '';
+    for (let i = 0; i < length; i++) {
+      otp += digits[Math.floor(Math.random() * 10)];
+    }
+    return otp;
   }
 }
