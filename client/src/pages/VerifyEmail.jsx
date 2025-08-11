@@ -2,6 +2,7 @@ import AuthLayout from "./AuthLayout";
 import React, { useState } from "react";
 import "./../styles/auth.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import { API } from "../utils/api.js";
 
 export default function VerifyEmail() {
   const location = useLocation();
@@ -33,21 +34,12 @@ export default function VerifyEmail() {
       return;
     }
     try {
-      const res = await fetch("http://localhost:3000/api/v1.0/users/verify-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, otp }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setApiError(data.message || "Verification failed");
-        return;
-      }
+      const data = await API.user.verifyOtp({ email, otp });
       setSuccess("Email verified! You can now log in.");
       window.localStorage.removeItem("pendingEmail");
       setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
-      setApiError("Network error. Please try again.");
+      setApiError(err.message || "Verification failed");
     }
   };
 
@@ -60,19 +52,10 @@ export default function VerifyEmail() {
       return;
     }
     try {
-      const res = await fetch("http://localhost:3000/api/v1.0/users/resend-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setApiError(data.message || "Failed to resend OTP");
-        return;
-      }
+      const data = await API.user.resendOtp(email);
       setSuccess("OTP resent to your email.");
     } catch (err) {
-      setApiError("Network error. Please try again.");
+      setApiError(err.message || "Failed to resend OTP");
     }
   };
 

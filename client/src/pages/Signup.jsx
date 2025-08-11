@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./../styles/auth.css";
 import { Link, useNavigate } from "react-router-dom";
+import { API } from "../utils/secureApi.js";
+import { passwordStrength, emailValidator, inputSanitizer } from "../utils/validation.js";
 import AuthLayout from "./AuthLayout";
 
 export default function Signup() {
@@ -10,14 +12,41 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
+  const [passwordStrengthInfo, setPasswordStrengthInfo] = useState(null);
+
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    
+    if (newPassword) {
+      setPasswordStrengthInfo(passwordStrength.checkStrength(newPassword));
+    } else {
+      setPasswordStrengthInfo(null);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
-    if (name.trim().length < 3) newErrors.name = "Name must be at least 3 characters";
-    if (!/^\S+@\S+\.\S+$/.test(email)) newErrors.email = "Enter a valid email";
-    if (password.length < 6) newErrors.password = "Password must be at least 6 characters";
+    
+    // Sanitize inputs
+    const sanitizedName = inputSanitizer.sanitizeName(name);
+    const sanitizedEmail = emailValidator.normalize(email);
+    
+    // Validation
+    if (sanitizedName.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
+    }
+    
+    if (!emailValidator.isValid(sanitizedEmail)) {
+      newErrors.email = "Enter a valid email";
+    }
+    
+    const passwordValidation = passwordStrength.isValidFormat(password);
+    if (!passwordValidation.isValid) {
+      newErrors.password = Object.values(passwordValidation.errors).filter(Boolean).join(', ');
+    }
 
     if (Object.keys(newErrors).length) {
       setErrors(newErrors);
@@ -27,22 +56,18 @@ export default function Signup() {
     setErrors({});
     setApiError("");
     // Split name into first and last
-    const [firstName, ...rest] = name.trim().split(" ");
+    const [firstName, ...rest] = sanitizedName.trim().split(" ");
     const lastName = rest.join(" ");
     try {
-      const res = await fetch("http://localhost:3000/api/v1.0/users/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, firstName, lastName }),
+      const data = await API.user.register({ 
+        email: sanitizedEmail, 
+        password, 
+        firstName, 
+        lastName 
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setApiError(data.message || "Signup failed");
-        return;
-      }
-      navigate("/verify-email", { state: { email } });
+      navigate("/verify-email", { state: { email: sanitizedEmail } });
     } catch (err) {
-      setApiError("Network error. Please try again.");
+      setApiError(err.message || "Signup failed");
     }
   };
 
@@ -72,12 +97,43 @@ export default function Signup() {
 
         <input
           type="password"
-          placeholder="Password (min 6 characters)"
+          placeholder="Password (min 8 characters, mixed case, numbers, symbols)"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={handlePasswordChange}
           className={errors.password ? "error-input" : ""}
           required
         />
+        {passwordStrengthInfo && (
+          <div className="password-strength" style={{ marginBottom: '8px' }}>
+            <div 
+              className="strength-bar" 
+              style={{ 
+                width: '100%', 
+                height: '4px', 
+                backgroundColor: '#eee', 
+                borderRadius: '2px',
+                overflow: 'hidden'
+              }}
+            >
+              <div 
+                style={{ 
+                  width: `${(passwordStrengthInfo.score / 6) * 100}%`, 
+                  height: '100%', 
+                  backgroundColor: passwordStrengthInfo.color,
+                  transition: 'all 0.3s ease'
+                }}
+              />
+            </div>
+            <div style={{ fontSize: '12px', color: passwordStrengthInfo.color, marginTop: '4px' }}>
+              Strength: {passwordStrengthInfo.strength}
+            </div>
+            {passwordStrengthInfo.feedback.length > 0 && (
+              <div style={{ fontSize: '11px', color: '#666', marginTop: '4px' }}>
+                {passwordStrengthInfo.feedback.join(', ')}
+              </div>
+            )}
+          </div>
+        )}
         {errors.password && <span className="error-text">{errors.password}</span>}
 
   <button type="submit">Sign Up</button>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./../styles/Venues.css";
+import { API } from "../utils/api.js";
 
 const Venues = () => {
   const [filters, setFilters] = useState({
@@ -20,9 +21,7 @@ const Venues = () => {
       setLoading(true);
       setApiError("");
       try {
-        const res = await fetch("http://localhost:3000/api/v1.0/facilities");
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Failed to fetch venues");
+        const data = await API.facility.getAll();
         setVenues(data);
       } catch (err) {
         setApiError(err.message || "Error fetching venues");

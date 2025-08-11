@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./../styles/profile.css";
+import { API } from "../utils/api.js";
 
 
 export default function EditProfile() {
@@ -17,12 +18,7 @@ export default function EditProfile() {
       setLoading(true);
       setApiError("");
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:3000/api/v1.0/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Failed to fetch profile");
+        const data = await API.user.getProfile();
         setName((data.firstName || "") + (data.lastName ? " " + data.lastName : ""));
         setPhone(data.phone || "");
         setEmail(data.email || "");
@@ -55,14 +51,7 @@ export default function EditProfile() {
     const [firstName, ...rest] = name.trim().split(" ");
     const lastName = rest.join(" ");
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:3000/api/v1.0/users/me", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ firstName, lastName, phone }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to update profile");
+      const data = await API.user.updateProfile({ firstName, lastName, phone });
       setSuccess("Profile updated successfully!");
     } catch (err) {
       setApiError(err.message || "Error updating profile");

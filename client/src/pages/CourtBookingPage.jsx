@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./../styles/CourtBookingPage.css";
+import { API } from "../utils/api.js";
 
 const CourtBookingPage = () => {
   const venue = {
@@ -50,18 +51,11 @@ const CourtBookingPage = () => {
     try {
       // For demo, using venue id 1. In real app, get from route or context
       const facilityId = 1;
-      const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:3000/api/v1.0/facilities/${facilityId}/bookings`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
-          courtId: selectedCourt,
-          date: selectedDate,
-          timeSlot: selectedTime,
-        }),
+      const data = await API.booking.create(facilityId, {
+        courtId: selectedCourt,
+        date: selectedDate,
+        timeSlot: selectedTime,
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Booking failed");
       setSuccess("Booking successful!");
     } catch (err) {
       setApiError(err.message || "Booking failed");

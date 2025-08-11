@@ -2,7 +2,9 @@
 import React, { useState } from "react";
 import "./../styles/auth.css";
 import { Link, useNavigate } from "react-router-dom";
+import { API } from "../utils/secureApi.js";
 import AuthLayout from "./AuthLayout";
+
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -26,21 +28,12 @@ export default function Login() {
     setErrors({});
     setApiError("");
     try {
-      const res = await fetch("http://localhost:3000/api/v1.0/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setApiError(data.message || "Login failed");
-        return;
-      }
+      const data = await API.user.login({ email, password });
       // Save token to localStorage (or context)
       localStorage.setItem("token", data.token);
       navigate("/profile-page");
     } catch (err) {
-      setApiError("Network error. Please try again.");
+      setApiError(err.message || "Login failed");
     }
   };
 
