@@ -1,7 +1,15 @@
-import 'reflect-metadata';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import "reflect-metadata";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from "typeorm";
+import { Bookings } from "./Bookings";
 
-@Entity('users')
+@Entity("users")
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -12,22 +20,23 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ name: 'first_name' })
+  @Column({ name: "first_name" })
   firstName: string;
 
-  @Column({ name: 'last_name' })
+  @Column({ name: "last_name" })
   lastName: string;
 
-  @Column({ default: 'user' })
+  @Column({ default: "user" })
   role: string;
 
-  @Column({ name: 'is_active', default: true })
+  @Column({ name: "is_active", default: true })
   isActive: boolean;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', nullable: true })
+  @UpdateDateColumn({ name: "updated_at", nullable: true })
   updatedAt?: Date;
-
+  @OneToMany(() => Bookings, (booking) => booking.user)
+  bookings: Bookings[];
 }
