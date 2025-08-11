@@ -1,6 +1,7 @@
 // src/pages/Home.js
 import { useState, useEffect } from "react";
 import "./../styles/Home.css";
+import { API } from "../utils/api.js";
 
 export default function Home() {
   const [matches, setMatches] = useState([]);
@@ -13,9 +14,7 @@ export default function Home() {
       setLoading(true);
       setApiError("");
       try {
-        const res = await fetch("http://localhost:3000/api/v1.0/facilities");
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Failed to fetch venues");
+        const data = await API.facility.getAll();
         // Map facilities to match card format
         setMatches(data.map((f) => ({
           id: f.id,

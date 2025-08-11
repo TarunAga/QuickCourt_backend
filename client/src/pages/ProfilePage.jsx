@@ -1,4 +1,6 @@
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { API } from "../utils/api.js";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -14,12 +16,7 @@ export default function ProfilePage() {
       setLoading(true);
       setApiError("");
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:3000/api/v1.0/bookings", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Failed to fetch bookings");
+        const data = await API.booking.getMyBookings();
         setBookings(data);
       } catch (err) {
         setApiError(err.message || "Error fetching bookings");
@@ -35,12 +32,7 @@ export default function ProfilePage() {
       setUserLoading(true);
       setUserError("");
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:3000/api/v1.0/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Failed to fetch user");
+        const data = await API.user.getProfile();
         setUser(data);
       } catch (err) {
         setUserError(err.message || "Error fetching user");
@@ -58,13 +50,7 @@ export default function ProfilePage() {
 
   const handleCancel = async (id) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:3000/api/v1.0/bookings/${id}/cancel`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to cancel booking");
+      const data = await API.booking.cancel(id);
       setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: "Cancelled", canCancel: false } : b)));
     } catch (err) {
       setApiError(err.message || "Error cancelling booking");
@@ -141,4 +127,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-import React, { useState, useEffect } from "react";

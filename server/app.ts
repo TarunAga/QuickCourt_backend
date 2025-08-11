@@ -12,6 +12,7 @@ import { AppDataSource } from './datasource';
 import apiV1Routes from './src/API/v1.0/index';
 import { errorHandler } from './src/middlewares/errorHandler';
 import { notFoundHandler } from './src/middlewares/notFoundHandler';
+import { sanitizeRequestBody, sanitizeResponse } from './src/middlewares/sanitizer';
 import { config } from './src/config/index';
 
 class App {
@@ -45,12 +46,16 @@ class App {
     // Compression
     this.app.use(compression());
 
-    // Logging
-    this.app.use(morgan(config.nodeEnv === 'production' ? 'combined' : 'dev'));
-
     // Body parsing
     this.app.use(express.json({ limit: '10mb' }));
     this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+    // Sanitization middleware (after body parsing)
+    this.app.use(sanitizeRequestBody);
+    this.app.use(sanitizeResponse);
+
+    // Logging (after sanitization)
+    this.app.use(morgan(config.nodeEnv === 'production' ? 'combined' : 'dev'));
   }
 
   private initializeRoutes(): void {
