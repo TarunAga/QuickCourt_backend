@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import "./../styles/auth.css";
 import { Link, useNavigate } from "react-router-dom";
-
+import AuthLayout from "./AuthLayout";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -45,7 +45,7 @@ export default function Login() {
   };
 
   return (
-    <div className="auth-container">
+    <AuthLayout>
       <h2>Login</h2>
   <form onSubmit={handleSubmit}>
         <input
@@ -75,6 +75,6 @@ export default function Login() {
       <div className="link">
         Don't have an account? <Link to="/signup">Sign Up</Link>
       </div>
-    </div>
+    </AuthLayout>
   );
 }
