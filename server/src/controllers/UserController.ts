@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
+import { AppDataSource } from '../../datasource';
 import { User } from '../entities/User';
 import { AuthHelper } from '../helpers/auth/AuthHelper';
 import { CreateUserDto } from '../interfaces/UserDto';
@@ -10,7 +10,7 @@ import crypto from 'crypto';
 const otpStore: Record<string, { otp: string; expires: number }> = {};
 
 export const register = async (req: Request, res: Response) => {
-  const userRepo = getRepository(User);
+  const userRepo = AppDataSource.getRepository(User);
   const { email, password, firstName, lastName } = req.body as CreateUserDto;
   try {
     let user = await userRepo.findOne({ where: { email } });
@@ -31,7 +31,7 @@ export const register = async (req: Request, res: Response) => {
 
 export const verifyOtp = async (req: Request, res: Response) => {
   const { email, otp } = req.body;
-  const userRepo = getRepository(User);
+  const userRepo = AppDataSource.getRepository(User);
   try {
     const user = await userRepo.findOne({ where: { email } });
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -51,7 +51,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
 
 export const resendOtp = async (req: Request, res: Response) => {
   const { email } = req.body;
-  const userRepo = getRepository(User);
+  const userRepo = AppDataSource.getRepository(User);
   try {
     const user = await userRepo.findOne({ where: { email } });
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -67,7 +67,7 @@ export const resendOtp = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  const userRepo = getRepository(User);
+  const userRepo = AppDataSource.getRepository(User);
   try {
     const user = await userRepo.findOne({ where: { email } });
     if (!user) return res.status(404).json({ message: 'User not found' });
