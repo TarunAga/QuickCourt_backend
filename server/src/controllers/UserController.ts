@@ -1,3 +1,40 @@
+// Get current user profile
+export const getProfile = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+    const userRepo = AppDataSource.getRepository(User);
+    const user = await userRepo.findOne({ where: { id: userId } });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    // Exclude password from response
+    const { password, ...userData } = user;
+    return res.json(userData);
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return res.status(500).json({ message: 'Failed to fetch profile', error: errorMsg });
+  }
+};
+
+// Update current user profile
+export const updateProfile = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+    const userRepo = AppDataSource.getRepository(User);
+    const user = await userRepo.findOne({ where: { id: userId } });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    const { firstName, lastName, phone } = req.body;
+    if (firstName !== undefined) user.firstName = firstName;
+    if (lastName !== undefined) user.lastName = lastName;
+    if (phone !== undefined) user.phone = phone;
+    await userRepo.save(user);
+    const { password, ...userData } = user;
+    return res.json(userData);
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return res.status(500).json({ message: 'Failed to update profile', error: errorMsg });
+  }
+};
 import { Request, Response } from 'express';
 import { AppDataSource } from '../../datasource';
 import { User } from '../entities/User';

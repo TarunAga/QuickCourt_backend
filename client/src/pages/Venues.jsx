@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./../styles/Venues.css";
 
 const Venues = () => {
@@ -11,35 +11,27 @@ const Venues = () => {
   const sports = ["Badminton", "Football", "Tennis", "Cricket", "Basketball"];
   const types = ["Indoor", "Outdoor", "Mixed"];
 
-  const venues = [
-    {
-      id: 1,
-      name: "Sunset Badminton Arena",
-      sport: "Badminton",
-      type: "Indoor",
-      rating: 4.5,
-      price: 250,
-      image: "https://via.placeholder.com/300x180?text=Badminton+Arena",
-    },
-    {
-      id: 2,
-      name: "Greenfield Turf",
-      sport: "Football",
-      type: "Outdoor",
-      rating: 4.8,
-      price: 500,
-      image: "https://via.placeholder.com/300x180?text=Football+Turf",
-    },
-    {
-      id: 3,
-      name: "Skyline Tennis Courts",
-      sport: "Tennis",
-      type: "Outdoor",
-      rating: 4.2,
-      price: 350,
-      image: "https://via.placeholder.com/300x180?text=Tennis+Court",
-    },
-  ];
+  const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState("");
+
+  useEffect(() => {
+    const fetchVenues = async () => {
+      setLoading(true);
+      setApiError("");
+      try {
+        const res = await fetch("http://localhost:3000/api/v1.0/facilities");
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to fetch venues");
+        setVenues(data);
+      } catch (err) {
+        setApiError(err.message || "Error fetching venues");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchVenues();
+  }, []);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -100,10 +92,14 @@ const Venues = () => {
 
       {/* Venue List */}
       <div className="venues-grid">
-        {filteredVenues.length > 0 ? (
+        {loading ? (
+          <div>Loading venues...</div>
+        ) : apiError ? (
+          <div className="error-text">{apiError}</div>
+        ) : filteredVenues.length > 0 ? (
           filteredVenues.map((venue) => (
             <div key={venue.id} className="venue-card">
-              <img src={venue.image} alt={venue.name} />
+              <img src={venue.image || "https://via.placeholder.com/300x180?text=Venue"} alt={venue.name} />
               <div className="venue-info">
                 <h3>{venue.name}</h3>
                 <p>{venue.sport} • {venue.type}</p>
