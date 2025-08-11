@@ -1,14 +1,41 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./../styles/profile.css";
 
+
 export default function EditProfile() {
-  const [name, setName] = useState("Mitchell Admin");
-  const [phone, setPhone] = useState("9999999999");
-  const [email, setEmail] = useState("mitchelladmin2017@gmail.com");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const fetchProfile = async () => {
+      setLoading(true);
+      setApiError("");
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("http://localhost:3000/api/v1.0/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to fetch profile");
+        setName((data.firstName || "") + (data.lastName ? " " + data.lastName : ""));
+        setPhone(data.phone || "");
+        setEmail(data.email || "");
+      } catch (err) {
+        setApiError(err.message || "Error fetching profile");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
@@ -22,9 +49,24 @@ export default function EditProfile() {
     }
 
     setErrors({});
-    console.log("Updated profile:", { name, phone, email, password });
-    alert("Profile updated successfully!");
-    // TODO: Call API
+    setApiError("");
+    setSuccess("");
+    // Split name into first and last
+    const [firstName, ...rest] = name.trim().split(" ");
+    const lastName = rest.join(" ");
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:3000/api/v1.0/users/me", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ firstName, lastName, phone }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to update profile");
+      setSuccess("Profile updated successfully!");
+    } catch (err) {
+      setApiError(err.message || "Error updating profile");
+    }
   };
 
   return (
@@ -39,46 +81,55 @@ export default function EditProfile() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit}>
-          <label>Full Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={errors.name ? "error-input" : ""}
-            required
-          />
-          {errors.name && <span className="error-text">{errors.name}</span>}
+        <>
+        {loading ? (
+          <div>Loading profile...</div>
+        ) : apiError ? (
+          <div className="error-text">{apiError}</div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <label>Full Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={errors.name ? "error-input" : ""}
+              required
+            />
+            {errors.name && <span className="error-text">{errors.name}</span>}
 
-          <label>Phone Number</label>
-          <input
-            type="text"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className={errors.phone ? "error-input" : ""}
-            required
-          />
-          {errors.phone && <span className="error-text">{errors.phone}</span>}
+            <label>Phone Number</label>
+            <input
+              type="text"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className={errors.phone ? "error-input" : ""}
+              required
+            />
+            {errors.phone && <span className="error-text">{errors.phone}</span>}
 
-          <label>Email Address</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={errors.email ? "error-input" : ""}
-            required
-          />
-          {errors.email && <span className="error-text">{errors.email}</span>}
+            <label>Email Address</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={errors.email ? "error-input" : ""}
+              required
+            />
+            {errors.email && <span className="error-text">{errors.email}</span>}
 
-          <label>New Password (optional)</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+            <label>New Password (optional)</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
-          <button type="submit" className="save-btn">Save Changes</button>
-        </form>
+            <button type="submit" className="save-btn">Save Changes</button>
+            {success && <div className="success-text" style={{ marginTop: 8 }}>{success}</div>}
+          </form>
+        )}
+        </>
       </div>
     </div>
   );

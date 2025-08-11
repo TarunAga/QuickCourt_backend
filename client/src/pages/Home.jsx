@@ -5,13 +5,31 @@ import "./../styles/Home.css";
 export default function Home() {
   const [matches, setMatches] = useState([]);
 
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState("");
+
   useEffect(() => {
-    // dummy data for now
-    setMatches([
-      { id: 1, sport: "Badminton", location: "City Sports Club", time: "Today 6 PM" },
-      { id: 2, sport: "Tennis", location: "Sunrise Courts", time: "Tomorrow 7 AM" },
-      { id: 3, sport: "Football", location: "Green Turf", time: "Sat 5 PM" },
-    ]);
+    const fetchVenues = async () => {
+      setLoading(true);
+      setApiError("");
+      try {
+        const res = await fetch("http://localhost:3000/api/v1.0/facilities");
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to fetch venues");
+        // Map facilities to match card format
+        setMatches(data.map((f) => ({
+          id: f.id,
+          sport: f.sport || f.type || "Venue",
+          location: f.name || f.location || "",
+          time: f.nextAvailableTime || "Available",
+        })));
+      } catch (err) {
+        setApiError(err.message || "Error fetching venues");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchVenues();
   }, []);
 
   return (
@@ -32,14 +50,22 @@ export default function Home() {
       <section className="matches-section">
         <h2>Upcoming Matches</h2>
         <div className="matches-list">
-          {matches.map((m) => (
-            <div key={m.id} className="match-card">
-              <h3>{m.sport}</h3>
-              <p>{m.location}</p>
-              <p>{m.time}</p>
-              <button className="secondary-btn">Join Match</button>
-            </div>
-          ))}
+          {loading ? (
+            <div>Loading venues...</div>
+          ) : apiError ? (
+            <div className="error-text">{apiError}</div>
+          ) : matches.length === 0 ? (
+            <div>No venues found.</div>
+          ) : (
+            matches.map((m) => (
+              <div key={m.id} className="match-card">
+                <h3>{m.sport}</h3>
+                <p>{m.location}</p>
+                <p>{m.time}</p>
+                <button className="secondary-btn">Book/Join</button>
+              </div>
+            ))
+          )}
         </div>
       </section>
     </div>
