@@ -1,7 +1,9 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { User } from './src/entities/User';
-import { File } from './src/entities/File';
+import { Facility } from './src/entities/Facility';
+import { Bookings } from './src/entities/Bookings';
+import { Sports } from './src/entities/Sports';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -11,11 +13,11 @@ export const AppDataSource = new DataSource({
   password: process.env.PGPASSWORD || process.env.DB_PASSWORD || '',
   database: process.env.PGDATABASE || process.env.DB_NAME || 'quickcourt',
   synchronize: process.env.NODE_ENV !== 'production', // Don't use in production
-  logging: process.env.NODE_ENV === 'development',
+  logging: process.env.NODE_ENV !== 'development',
   ssl: process.env.PGSSLMODE === 'require' ? {
     rejectUnauthorized: false
   } : false,
-  entities: [User, File],
+  entities: [User, Facility, Bookings, Sports],
   migrations: ['./src/migrations/**/*.ts'],
   subscribers: ['./src/subscribers/**/*.ts'],
 });

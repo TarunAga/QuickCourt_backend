@@ -37,7 +37,6 @@ declare global {
   namespace Express {
     interface Request {
       user?: AuthUserDto;
-      file?: any; // Use any instead of Express.Multer.File for compatibility
     }
   }
 }

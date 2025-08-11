@@ -1,6 +1,9 @@
+
 import { Router } from 'express';
-import fileRoutes from './fileRoutes';
-// Import other route modules as they are created
+
+import facilityRoutes from './facility.routes';
+import bookingRoutes from './booking.routes';
+import reviewRoutes from './review.routes';
 
 const router = Router();
 
@@ -13,10 +16,10 @@ router.get('/health', (req, res) => {
   });
 });
 
-// Route modules
-router.use('/files', fileRoutes);
-// Add other routes here as they are created
-// router.use('/users', userRoutes);
-// router.use('/auth', authRoutes);
+
+
+router.use('/facilities', facilityRoutes);
+router.use('/bookings', bookingRoutes);
+router.use('/', reviewRoutes);
 
 export default router;
