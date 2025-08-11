@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import fileRoutes from './fileRoutes';
 // Import other route modules as they are created
 
 const router = Router();
@@ -14,7 +13,6 @@ router.get('/health', (req, res) => {
 });
 
 // Route modules
-router.use('/files', fileRoutes);
 // Add other routes here as they are created
 // router.use('/users', userRoutes);
 // router.use('/auth', authRoutes);
