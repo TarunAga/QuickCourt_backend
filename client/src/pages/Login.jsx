@@ -1,14 +1,13 @@
-
 import React, { useState } from "react";
 import "./../styles/auth.css";
 import { Link, useNavigate } from "react-router-dom";
 import { API } from "../utils/secureApi.js";
 import AuthLayout from "./AuthLayout";
 
-
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("User"); // default role
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const navigate = useNavigate();
@@ -19,6 +18,7 @@ export default function Login() {
     const newErrors = {};
     if (!/^\S+@\S+\.\S+$/.test(email)) newErrors.email = "Enter a valid email";
     if (password.length < 6) newErrors.password = "Password must be at least 6 characters";
+    if (!["User", "Facility Owner"].includes(role)) newErrors.role = "Select a valid role";
 
     if (Object.keys(newErrors).length) {
       setErrors(newErrors);
@@ -28,8 +28,7 @@ export default function Login() {
     setErrors({});
     setApiError("");
     try {
-      const data = await API.user.login({ email, password });
-      // Save token to localStorage (or context)
+      const data = await API.user.login({ email, password, role }); // send role too
       localStorage.setItem("token", data.token);
       navigate("/profile-page");
     } catch (err) {
@@ -40,7 +39,7 @@ export default function Login() {
   return (
     <AuthLayout>
       <h2>Login</h2>
-  <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <input
           type="email"
           placeholder="Email Address"
@@ -61,8 +60,20 @@ export default function Login() {
         />
         {errors.password && <span className="error-text">{errors.password}</span>}
 
-  <button type="submit">Login</button>
-  {apiError && <div className="error-text" style={{ marginTop: 8 }}>{apiError}</div>}
+        {/* Role dropdown */}
+        <select 
+          value={role} 
+          onChange={(e) => setRole(e.target.value)} 
+          className={errors.role ? "error-input" : ""}
+          required
+        >
+          <option value="User">User</option>
+          <option value="Facility Owner">Facility Owner</option>
+        </select>
+        {errors.role && <span className="error-text">{errors.role}</span>}
+
+        <button type="submit">Login</button>
+        {apiError && <div className="error-text" style={{ marginTop: 8 }}>{apiError}</div>}
       </form>
 
       <div className="link">
