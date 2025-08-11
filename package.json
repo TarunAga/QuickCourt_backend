@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js",
-    "dev": "ts-node-dev --respawn --transpile-only app.ts",
+    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register app.ts",
     "watch": "tsc --watch",
     "test": "jest",
     "test:watch": "jest --watch",
