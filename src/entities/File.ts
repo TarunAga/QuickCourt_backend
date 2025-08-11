@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import 'reflect-metadata';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { User } from './User';
 
 @Entity('files')
 export class File {
@@ -22,6 +24,10 @@ export class File {
 
   @Column({ name: 'user_id' })
   userId: number;
+
+  @ManyToOne(() => User, (user) => user.files)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @Column({ nullable: true })
   description?: string;
