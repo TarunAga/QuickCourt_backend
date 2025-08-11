@@ -1,0 +1,228 @@
+/* General Layout */
+.profile-page {
+  display: flex;
+  background: #111;
+  color: white;
+  font-family: "Segoe UI", sans-serif;
+  min-height: 100vh;
+}
+
+.profile-page.center-content {
+  justify-content: center;
+  align-items: center;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #181818;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-pic {
+  width: 100px;
+  height: 100px;
+  background: #333;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.sidebar h3 {
+  margin: 5px 0;
+}
+
+.sidebar p {
+  font-size: 14px;
+  color: #bbb;
+}
+
+.sidebar button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background: #333;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+.sidebar button.active-btn {
+  background: #056839;
+}
+
+.sidebar button:hover {
+  background: #444;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 20px;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px 15px;
+  background: #333;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+.tab.active {
+  background: #056839;
+}
+
+/* Bookings */
+.bookings {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.booking-card {
+  background: #222;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.booking-card h4 {
+  margin: 0 0 5px;
+}
+
+.type {
+  color: #ccc;
+  font-weight: normal;
+}
+
+.status {
+  color: #00ff84;
+  font-weight: bold;
+}
+
+.booking-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.cancel-btn,
+.review-btn {
+  padding: 8px 12px;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #ff4d4d;
+}
+
+.cancel-btn:hover {
+  background: #d43f3f;
+}
+
+.review-btn {
+  background: #007bff;
+}
+
+.review-btn:hover {
+  background: #0056b3;
+}
+
+/* Edit Profile */
+.edit-profile-container {
+  background: #181818;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #333;
+  width: 100%;
+  max-width: 400px;
+  color: white;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.edit-profile-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.edit-profile-pic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.edit-profile-pic .profile-pic {
+  width: 100px;
+  height: 100px;
+  background: #333;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.edit-profile-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-profile-container label {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.edit-profile-container input {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: none;
+  background: #222;
+  color: white;
+}
+
+.error-input {
+  border: 1px solid #e74c3c;
+}
+
+.error-text {
+  font-size: 13px;
+  color: #e74c3c;
+  margin-bottom: 8px;
+}
+
+.save-btn {
+  padding: 10px;
+  background: #056839;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.save-btn:hover {
+  background: #04512a;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
