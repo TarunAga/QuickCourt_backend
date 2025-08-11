@@ -10,12 +10,19 @@ export class FileOperations {
   private fileRepository: Repository<File>;
 
   constructor() {
-    this.fileRepository = AppDataSource.getRepository(File);
+    // Repository will be initialized when first accessed
+  }
+
+  private getFileRepository(): Repository<File> {
+    if (!this.fileRepository) {
+      this.fileRepository = AppDataSource.getRepository(File);
+    }
+    return this.fileRepository;
   }
 
   async uploadFile(fileData: CreateFileDto): Promise<File> {
     try {
-      const file = this.fileRepository.create({
+      const file = this.getFileRepository().create({
         originalName: fileData.originalName,
         filename: fileData.filename,
         path: fileData.path,
@@ -25,7 +32,7 @@ export class FileOperations {
         uploadedAt: new Date(),
       });
 
-      const savedFile = await this.fileRepository.save(file);
+      const savedFile = await this.getFileRepository().save(file);
       return savedFile;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
@@ -35,7 +42,7 @@ export class FileOperations {
 
   async getFileById(fileId: number, userId: number): Promise<File | null> {
     try {
-      const file = await this.fileRepository.findOne({
+      const file = await this.getFileRepository().findOne({
         where: {
           id: fileId,
           userId: userId,
@@ -57,7 +64,7 @@ export class FileOperations {
     try {
       const skip = (page - 1) * limit;
 
-      const [files, total] = await this.fileRepository.findAndCount({
+      const [files, total] = await this.getFileRepository().findAndCount({
         where: { userId },
         order: { uploadedAt: 'DESC' },
         skip,
@@ -85,7 +92,7 @@ export class FileOperations {
 
   async deleteFile(fileId: number, userId: number): Promise<boolean> {
     try {
-      const file = await this.fileRepository.findOne({
+      const file = await this.getFileRepository().findOne({
         where: {
           id: fileId,
           userId: userId,
@@ -102,7 +109,7 @@ export class FileOperations {
       }
 
       // Delete from database
-      await this.fileRepository.remove(file);
+      await this.getFileRepository().remove(file);
       
       return true;
     } catch (error) {
@@ -117,7 +124,7 @@ export class FileOperations {
     updateData: UpdateFileDto
   ): Promise<File | null> {
     try {
-      const file = await this.fileRepository.findOne({
+      const file = await this.getFileRepository().findOne({
         where: {
           id: fileId,
           userId: userId,
@@ -132,7 +139,7 @@ export class FileOperations {
       Object.assign(file, updateData);
       file.updatedAt = new Date();
 
-      const updatedFile = await this.fileRepository.save(file);
+      const updatedFile = await this.getFileRepository().save(file);
       return updatedFile;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
@@ -149,7 +156,7 @@ export class FileOperations {
     try {
       const skip = (page - 1) * limit;
 
-      const [files, total] = await this.fileRepository.findAndCount({
+      const [files, total] = await this.getFileRepository().findAndCount({
         where: { 
           userId, 
           mimetype: mimetype 
@@ -180,7 +187,7 @@ export class FileOperations {
 
   async getTotalStorageUsed(userId: number): Promise<number> {
     try {
-      const result = await this.fileRepository
+      const result = await this.getFileRepository()
         .createQueryBuilder('file')
         .select('SUM(file.size)', 'totalSize')
         .where('file.userId = :userId', { userId })
