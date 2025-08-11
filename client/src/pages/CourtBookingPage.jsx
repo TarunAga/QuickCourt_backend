@@ -36,16 +36,36 @@ const CourtBookingPage = () => {
     setPrice(court ? court.price : 0);
   };
 
-  const handleBooking = () => {
+  const [apiError, setApiError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleBooking = async () => {
     if (!selectedCourt || !selectedDate || !selectedTime) {
       setError("Please select a court, date, and time slot.");
       return;
     }
     setError("");
-    // Proceed to payment logic
-    alert(
-      `Proceeding to payment for ${venue.name} - Court ${selectedCourt} on ${selectedDate} at ${selectedTime}`
-    );
+    setApiError("");
+    setSuccess("");
+    try {
+      // For demo, using venue id 1. In real app, get from route or context
+      const facilityId = 1;
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:3000/api/v1.0/facilities/${facilityId}/bookings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          courtId: selectedCourt,
+          date: selectedDate,
+          timeSlot: selectedTime,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Booking failed");
+      setSuccess("Booking successful!");
+    } catch (err) {
+      setApiError(err.message || "Booking failed");
+    }
   };
 
   return (
@@ -99,7 +119,9 @@ const CourtBookingPage = () => {
           <div className="price-display">Total Price: ₹{price}</div>
         )}
 
-        {error && <p className="error-message">{error}</p>}
+  {error && <p className="error-message">{error}</p>}
+  {apiError && <p className="error-message">{apiError}</p>}
+  {success && <p className="success-text">{success}</p>}
 
         <button className="proceed-btn" onClick={handleBooking}>
           Proceed to Payment
