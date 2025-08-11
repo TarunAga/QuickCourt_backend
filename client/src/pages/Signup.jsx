@@ -3,6 +3,7 @@ import "./../styles/auth.css";
 import { Link, useNavigate } from "react-router-dom";
 import { API } from "../utils/secureApi.js";
 import { passwordStrength, emailValidator, inputSanitizer } from "../utils/validation.js";
+import AuthLayout from "./AuthLayout";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -71,7 +72,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="auth-container">
+    <AuthLayout>
       <h2>Sign Up</h2>
       <form onSubmit={handleSubmit}>
         <input
@@ -142,6 +143,6 @@ export default function Signup() {
       <div className="link">
         Already have an account? <Link to="/login">Login</Link>
       </div>
-    </div>
+    </AuthLayout>
   );
 }

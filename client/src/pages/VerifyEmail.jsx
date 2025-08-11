@@ -1,4 +1,4 @@
-
+import AuthLayout from "./AuthLayout";
 import React, { useState } from "react";
 import "./../styles/auth.css";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -60,7 +60,7 @@ export default function VerifyEmail() {
   };
 
   return (
-    <div className="auth-container">
+    <AuthLayout>
       <h2>Verify Email</h2>
       <p className="sub-text">Enter the OTP sent to your email</p>
 
@@ -83,6 +83,6 @@ export default function VerifyEmail() {
       <div className="link">
         Didn’t receive the OTP? <a href="#" onClick={handleResend}>Resend</a>
       </div>
-    </div>
+    </AuthLayout>
   );
 }
