@@ -1,13 +1,17 @@
+
 import React, { useState } from "react";
 import "./../styles/auth.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
@@ -20,14 +24,30 @@ export default function Login() {
     }
 
     setErrors({});
-    console.log("Login with:", email, password);
-    // TODO: Call API
+    setApiError("");
+    try {
+      const res = await fetch("http://localhost:3000/api/v1.0/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setApiError(data.message || "Login failed");
+        return;
+      }
+      // Save token to localStorage (or context)
+      localStorage.setItem("token", data.token);
+      navigate("/profile-page");
+    } catch (err) {
+      setApiError("Network error. Please try again.");
+    }
   };
 
   return (
     <div className="auth-container">
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
+  <form onSubmit={handleSubmit}>
         <input
           type="email"
           placeholder="Email Address"
@@ -48,7 +68,8 @@ export default function Login() {
         />
         {errors.password && <span className="error-text">{errors.password}</span>}
 
-        <button type="submit">Login</button>
+  <button type="submit">Login</button>
+  {apiError && <div className="error-text" style={{ marginTop: 8 }}>{apiError}</div>}
       </form>
 
       <div className="link">

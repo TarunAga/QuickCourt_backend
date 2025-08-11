@@ -8,8 +8,9 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
@@ -23,9 +24,25 @@ export default function Signup() {
     }
 
     setErrors({});
-    console.log("Signup with:", name, email, password);
-    // TODO: Call signup API
-    navigate("/verify-email");
+    setApiError("");
+    // Split name into first and last
+    const [firstName, ...rest] = name.trim().split(" ");
+    const lastName = rest.join(" ");
+    try {
+      const res = await fetch("http://localhost:3000/api/v1.0/users/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, firstName, lastName }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setApiError(data.message || "Signup failed");
+        return;
+      }
+      navigate("/verify-email", { state: { email } });
+    } catch (err) {
+      setApiError("Network error. Please try again.");
+    }
   };
 
   return (
@@ -62,7 +79,8 @@ export default function Signup() {
         />
         {errors.password && <span className="error-text">{errors.password}</span>}
 
-        <button type="submit">Sign Up</button>
+  <button type="submit">Sign Up</button>
+  {apiError && <div className="error-text" style={{ marginTop: 8 }}>{apiError}</div>}
       </form>
 
       <div className="link">
